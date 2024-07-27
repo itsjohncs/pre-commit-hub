@@ -6,7 +6,9 @@ from .commands.remove import remove_hook
 
 
 def setup_parser():
-    parser = argparse.ArgumentParser(description="Pre-commit hook index tool")
+    parser = argparse.ArgumentParser(
+        description="Experimental pre-commit package manager."
+    )
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
     subparsers.add_parser(
