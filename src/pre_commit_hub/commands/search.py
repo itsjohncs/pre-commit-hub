@@ -11,7 +11,6 @@ def load_cache() -> SearchIndex:
     if not cache_file.exists():
         print("Cache file does not exist. Building cache...")
         build_cache()
-        print("Cache built. Proceeding with search.")
 
     with open(cache_file, "r") as f:
         data = yaml.safe_load(f)
