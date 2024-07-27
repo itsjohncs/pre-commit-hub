@@ -4,6 +4,7 @@ import requests
 from importlib import resources
 from pydantic import BaseModel
 from pathlib import Path
+import argparse
 
 
 class Hook(BaseModel):
@@ -43,7 +44,18 @@ def fetch_hooks(repo):
     return None
 
 
-def main() -> int:
+def setup_parser():
+    parser = argparse.ArgumentParser(description="Pre-commit hook index tool")
+    subparsers = parser.add_subparsers(dest="command", help="Available commands")
+
+    subparsers.add_parser(
+        "build-index", help="(Re)build the index of pre-commit hooks."
+    )
+
+    return parser
+
+
+def build_cache():
     repos = load_repositories()
     cache_data = []
     for repo in repos:
@@ -59,4 +71,16 @@ def main() -> int:
 
     save_to_cache(cache_data)
     print("Data saved to ~/.pre-commit-hook-index/index.yaml")
+
+
+def main() -> int:
+    parser = setup_parser()
+    args = parser.parse_args()
+
+    if args.command == "build-index":
+        build_cache()
+    else:
+        parser.print_help()
+        return 1
+
     return 0
