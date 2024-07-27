@@ -9,7 +9,7 @@ from pathlib import Path
 class Hook(BaseModel):
     id: str
     name: str
-    description: Optional[str]
+    description: Optional[str] = None
 
 
 def load_repositories():
@@ -39,15 +39,7 @@ def fetch_hooks(repo):
     response = requests.get(url)
     if response.status_code == 200:
         hooks = yaml.safe_load(response.text)
-        return [
-            Hook(
-                id=hook["id"],
-                name=hook.get("name", hook["id"]),
-                description=hook.get("description", "No description provided"),
-            )
-            for hook in hooks
-            if "id" in hook
-        ]
+        return [Hook.model_validate(hook) for hook in hooks]
     return None
 
 
