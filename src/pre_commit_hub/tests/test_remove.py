@@ -1,5 +1,5 @@
 import yaml
-from pre_commit_hook_index.commands.remove import transform_yaml_remove_hook
+from pre_commit_hub.commands.remove import transform_yaml_remove_hook
 
 
 def test_transform_yaml_remove_hook_empty():

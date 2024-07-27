@@ -1,7 +1,7 @@
 import pytest
 import yaml
-from pre_commit_hook_index.commands.add import find_hooks, modify_yaml_config
-from pre_commit_hook_index.models import SearchIndex, Repository, Hook
+from pre_commit_hub.commands.add import find_hooks, modify_yaml_config
+from pre_commit_hub.models import SearchIndex, Repository, Hook
 
 
 @pytest.fixture

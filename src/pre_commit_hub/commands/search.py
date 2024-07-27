@@ -7,7 +7,7 @@ from ..models import SearchIndex
 
 
 def load_cache() -> SearchIndex:
-    cache_file = Path.home() / ".pre-commit-hook-index" / "index.yaml"
+    cache_file = Path.home() / ".pre-commit-hub" / "index.yaml"
     if not cache_file.exists():
         print("Cache file does not exist. Building cache...")
         build_cache()

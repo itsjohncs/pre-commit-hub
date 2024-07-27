@@ -34,26 +34,26 @@ pluggy==1.5.0
 pycparser==2.22
     # via cffi
 pydantic==2.8.2
-    # via pre-commit-hook-index
+    # via pre-commit-hub
 pydantic-core==2.20.1
     # via pydantic
 pygithub==2.3.0
-    # via pre-commit-hook-index
+    # via pre-commit-hub
 pyjwt==2.8.0
     # via pygithub
 pynacl==1.5.0
     # via pygithub
 pytest==8.3.2
-    # via pre-commit-hook-index
+    # via pre-commit-hub
 pyyaml==6.0.1
-    # via pre-commit-hook-index
+    # via pre-commit-hub
 rapidfuzz==3.9.4
     # via thefuzz
 requests==2.32.3
-    # via pre-commit-hook-index
+    # via pre-commit-hub
     # via pygithub
 thefuzz==0.22.1
-    # via pre-commit-hook-index
+    # via pre-commit-hub
 typing-extensions==4.12.2
     # via pydantic
     # via pydantic-core

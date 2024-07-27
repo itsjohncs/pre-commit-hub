@@ -1,5 +1,5 @@
 [project]
-name = "pre-commit-hook-index"
+name = "pre-commit-hub"
 version = "0.1.0"
 description = "Add your description here"
 authors = [
@@ -17,7 +17,7 @@ readme = "README.md"
 requires-python = ">= 3.9"
 
 [project.scripts]
-"pre-commit-hook-index" = "pre_commit_hook_index:cli.main"
+"pre-commit-hub" = "pre_commit_hub:cli.main"
 
 [build-system]
 requires = ["hatchling"]
@@ -31,7 +31,7 @@ dev-dependencies = []
 allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/pre_commit_hook_index"]
+packages = ["src/pre_commit_hub"]
 
 [tool.pyright]
 venvPath = "."
