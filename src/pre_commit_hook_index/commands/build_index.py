@@ -1,8 +1,13 @@
 import yaml
-import requests
 from importlib import resources
 from pathlib import Path
 from ..models import Hook, Repository, SearchIndex
+from github import Github
+import os
+
+# Initialize Github client
+github_token = os.environ.get("GITHUB_TOKEN")
+g = Github(github_token)
 
 
 def load_repositories():
@@ -11,11 +16,15 @@ def load_repositories():
 
 
 def fetch_repo_info(repo):
-    url = f"https://api.github.com/repos/{repo}"
-    response = requests.get(url)
-    if response.status_code == 200:
-        return response.json()
-    return None
+    try:
+        github_repo = g.get_repo(repo)
+        return {
+            "stargazers_count": github_repo.stargazers_count,
+            "description": github_repo.description,
+            "homepage": github_repo.homepage,
+        }
+    except Exception as e:
+        raise RuntimeError(f"Got error fetching repo info for {repo}") from e
 
 
 def save_to_cache(data: SearchIndex):
@@ -28,12 +37,17 @@ def save_to_cache(data: SearchIndex):
 
 
 def fetch_hooks(repo):
-    url = f"https://raw.githubusercontent.com/{repo}/main/.pre-commit-hooks.yaml"
-    response = requests.get(url)
-    if response.status_code == 200:
-        hooks = yaml.safe_load(response.text)
+    try:
+        github_repo = g.get_repo(repo)
+        contents = github_repo.get_contents(".pre-commit-hooks.yaml")
+        if isinstance(contents, list):
+            content = contents[0]
+        else:
+            content = contents
+        hooks = yaml.safe_load(content.decoded_content)
         return [Hook.model_validate(hook) for hook in hooks]
-    return None
+    except Exception as e:
+        raise RuntimeError(f"Got error fetching hooks in repo {repo}") from e
 
 
 def build_cache():
@@ -41,12 +55,17 @@ def build_cache():
     cache_data = []
     for repo in repos:
         info = fetch_repo_info(repo)
+        if not info:
+            continue
+
         hooks = fetch_hooks(repo)
-        if info and hooks:
-            repo_data = Repository(
-                repository=repo, stars=info["stargazers_count"], hooks=hooks
-            )
-            cache_data.append(repo_data)
+        if not hooks:
+            continue
+
+        repo_data = Repository(
+            repository=repo, stars=info["stargazers_count"], hooks=hooks
+        )
+        cache_data.append(repo_data)
 
     search_index = SearchIndex(repositories=cache_data)
     save_to_cache(search_index)
