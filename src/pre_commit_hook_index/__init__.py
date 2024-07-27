@@ -1,8 +1,9 @@
-from typing import Optional
+from typing import Optional, List, Dict
 import yaml
 import requests
 from importlib import resources
 from pydantic import BaseModel
+from pathlib import Path
 
 
 class Hook(BaseModel):
@@ -24,6 +25,15 @@ def fetch_repo_info(repo):
     return None
 
 
+def save_to_cache(data: List[Dict]):
+    cache_dir = Path.home() / ".pre-commit-hook-index"
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    cache_file = cache_dir / "index.yaml"
+
+    with open(cache_file, "w") as f:
+        yaml.dump(data, f, default_flow_style=False)
+
+
 def fetch_hooks(repo):
     url = f"https://raw.githubusercontent.com/{repo}/main/.pre-commit-hooks.yaml"
     response = requests.get(url)
@@ -43,16 +53,18 @@ def fetch_hooks(repo):
 
 def main() -> int:
     repos = load_repositories()
+    cache_data = []
     for repo in repos:
         info = fetch_repo_info(repo)
         hooks = fetch_hooks(repo)
         if info and hooks:
-            print(f"Repository: {repo}")
-            print(f"Stars: {info['stargazers_count']}")
-            print("Hooks:")
-            for hook in hooks:
-                print(f"  - ID: {hook.id}")
-                print(f"    Name: {hook.name}")
-                print(f"    Description: {hook.description}")
-            print("---")
+            repo_data = {
+                "repository": repo,
+                "stars": info["stargazers_count"],
+                "hooks": [hook.model_dump() for hook in hooks],
+            }
+            cache_data.append(repo_data)
+
+    save_to_cache(cache_data)
+    print("Data saved to ~/.pre-commit-hook-index/index.yaml")
     return 0
