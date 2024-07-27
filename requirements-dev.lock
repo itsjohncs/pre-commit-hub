@@ -24,7 +24,11 @@ pydantic-core==2.20.1
     # via pydantic
 pyyaml==6.0.1
     # via pre-commit-hook-index
+rapidfuzz==3.9.4
+    # via thefuzz
 requests==2.32.3
+    # via pre-commit-hook-index
+thefuzz==0.22.1
     # via pre-commit-hook-index
 typing-extensions==4.12.2
     # via pydantic
