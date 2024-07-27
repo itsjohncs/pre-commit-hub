@@ -17,29 +17,22 @@ def search_hooks(query: str):
         data = yaml.safe_load(f)
         search_index = SearchIndex.model_validate(data)
 
-    all_hooks = []
-    for repo_data in search_index.repositories:
-        repo = repo_data.repository
-        for hook in repo_data.hooks:
-            all_hooks.append(
-                {
-                    "repo": repo,
-                    "hook_id": hook.id,
-                    "hook_name": hook.name,
-                    "hook_description": hook.description or "",
-                }
-            )
+    documents = [
+        {"repository": repo.repository, "stars": repo.stars, **hook.model_dump()}
+        for repo in search_index.repositories
+        for hook in repo.hooks
+    ]
 
-    # Perform the fuzzy search
-    results = process.extract(query, all_hooks, scorer=fuzz.partial_token_sort_ratio)
+    results = process.extract(query, documents, scorer=fuzz.partial_token_sort_ratio)
 
     if not results:
         print(f"No results found for query: {query}")
     else:
         for hook, score in cast(list[Tuple[dict, int]], results):
             print(f"Match score: {score}")
-            print(f"Repository: {hook['repo']}")
-            print(f"Hook ID: {hook['hook_id']}")
-            print(f"Hook Name: {hook['hook_name']}")
-            print(f"Description: {hook['hook_description']}")
+            print(f"Repository: {hook['repository']}")
+            print(f"Stars: {hook['stars']}")
+            print(f"Hook ID: {hook['id']}")
+            print(f"Hook Name: {hook['name']}")
+            print(f"Description: {hook['description']}")
             print("---")
