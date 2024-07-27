@@ -3,6 +3,7 @@ import yaml
 from pathlib import Path
 from thefuzz import fuzz, process
 from .build_index import build_cache
+from ..models import SearchIndex
 
 
 def search_hooks(query: str):
@@ -14,17 +15,18 @@ def search_hooks(query: str):
 
     with open(cache_file, "r") as f:
         data = yaml.safe_load(f)
+        search_index = SearchIndex.model_validate(data)
 
     all_hooks = []
-    for repo_data in data:
-        repo = repo_data["repository"]
-        for hook in repo_data["hooks"]:
+    for repo_data in search_index.repositories:
+        repo = repo_data.repository
+        for hook in repo_data.hooks:
             all_hooks.append(
                 {
                     "repo": repo,
-                    "hook_id": hook["id"],
-                    "hook_name": hook["name"],
-                    "hook_description": hook.get("description", ""),
+                    "hook_id": hook.id,
+                    "hook_name": hook.name,
+                    "hook_description": hook.description or "",
                 }
             )
 

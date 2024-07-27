@@ -1,15 +1,8 @@
-from typing import List, Dict
 import yaml
 import requests
 from importlib import resources
-from pydantic import BaseModel
 from pathlib import Path
-
-
-class Hook(BaseModel):
-    id: str
-    name: str
-    description: str | None = None
+from ..models import Hook, Repository, SearchIndex
 
 
 def load_repositories():
@@ -25,13 +18,13 @@ def fetch_repo_info(repo):
     return None
 
 
-def save_to_cache(data: List[Dict]):
+def save_to_cache(data: SearchIndex):
     cache_dir = Path.home() / ".pre-commit-hook-index"
     cache_dir.mkdir(parents=True, exist_ok=True)
     cache_file = cache_dir / "index.yaml"
 
     with open(cache_file, "w") as f:
-        yaml.dump(data, f, default_flow_style=False)
+        yaml.dump(data.model_dump(), f, default_flow_style=False)
 
 
 def fetch_hooks(repo):
@@ -50,12 +43,11 @@ def build_cache():
         info = fetch_repo_info(repo)
         hooks = fetch_hooks(repo)
         if info and hooks:
-            repo_data = {
-                "repository": repo,
-                "stars": info["stargazers_count"],
-                "hooks": [hook.model_dump() for hook in hooks],
-            }
+            repo_data = Repository(
+                repository=repo, stars=info["stargazers_count"], hooks=hooks
+            )
             cache_data.append(repo_data)
 
-    save_to_cache(cache_data)
+    search_index = SearchIndex(repositories=cache_data)
+    save_to_cache(search_index)
     print("Data saved to ~/.pre-commit-hook-index/index.yaml")
