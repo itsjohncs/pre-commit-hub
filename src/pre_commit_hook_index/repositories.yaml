@@ -1,0 +1,14 @@
+- pre-commit/pre-commit-hooks
+- pre-commit/pygrep-hooks
+- asottile/pyupgrade
+- psf/black
+- PyCQA/flake8
+- PyCQA/isort
+- shellcheck-py/shellcheck-py
+- standard/standard
+- rhysd/actionlint
+- crate-ci/typos
+- jorisroovers/gitlint
+- gitleaks/gitleaks
+- realm/SwiftLint
+- rubocop/rubocop
