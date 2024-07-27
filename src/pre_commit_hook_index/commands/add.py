@@ -63,7 +63,7 @@ def add_hook_to_config(
         print(f"Hook '{hook.id}' from '{repository.repository}' is already in config")
 
 
-def add_hook(query: str, config_file: Union[str, Path]):
+def add_hook(query: str, config_file: str):
     search_index = load_cache()
     result = find_hook(query, search_index)
     if result:
