@@ -2,6 +2,7 @@ import argparse
 from .commands.build_index import build_cache
 from .commands.search import search_hooks
 from .commands.add import add_hook
+from .commands.remove import remove_hook
 
 
 def setup_parser():
@@ -26,6 +27,17 @@ def setup_parser():
         help="Path to the config file (default: .pre-commit-config.yaml)",
     )
 
+    remove_parser = subparsers.add_parser(
+        "remove", help="Remove a pre-commit hook from the config"
+    )
+    remove_parser.add_argument("hook_id", help="Hook ID to remove")
+    remove_parser.add_argument(
+        "-f",
+        "--config-file",
+        default=".pre-commit-config.yaml",
+        help="Path to the config file (default: .pre-commit-config.yaml)",
+    )
+
     return parser
 
 
@@ -39,6 +51,8 @@ def main() -> int:
         search_hooks(args.query)
     elif args.command == "add":
         add_hook(args.hook_name, args.config_file)
+    elif args.command == "remove":
+        remove_hook(args.hook_id, args.config_file)
     elif args.command is None:
         parser.print_help()
         return 1
