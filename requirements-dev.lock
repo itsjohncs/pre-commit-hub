@@ -18,10 +18,18 @@ charset-normalizer==3.3.2
     # via requests
 idna==3.7
     # via requests
+iniconfig==2.0.0
+    # via pytest
+packaging==24.1
+    # via pytest
+pluggy==1.5.0
+    # via pytest
 pydantic==2.8.2
     # via pre-commit-hook-index
 pydantic-core==2.20.1
     # via pydantic
+pytest==8.3.2
+    # via pre-commit-hook-index
 pyyaml==6.0.1
     # via pre-commit-hook-index
 rapidfuzz==3.9.4

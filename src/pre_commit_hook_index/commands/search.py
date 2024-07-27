@@ -6,7 +6,7 @@ from .build_index import build_cache
 from ..models import SearchIndex
 
 
-def search_hooks(query: str):
+def load_cache() -> SearchIndex:
     cache_file = Path.home() / ".pre-commit-hook-index" / "index.yaml"
     if not cache_file.exists():
         print("Cache file does not exist. Building cache...")
@@ -15,7 +15,11 @@ def search_hooks(query: str):
 
     with open(cache_file, "r") as f:
         data = yaml.safe_load(f)
-        search_index = SearchIndex.model_validate(data)
+        return SearchIndex.model_validate(data)
+
+
+def search_hooks(query: str):
+    search_index = load_cache()
 
     documents = [
         {"repository": repo.repository, "stars": repo.stars, **hook.model_dump()}
