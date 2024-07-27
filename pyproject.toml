@@ -16,7 +16,7 @@ readme = "README.md"
 requires-python = ">= 3.9"
 
 [project.scripts]
-"pre-commit-hook-index" = "pre_commit_hook_index:main"
+"pre-commit-hook-index" = "pre_commit_hook_index:cli.main"
 
 [build-system]
 requires = ["hatchling"]
