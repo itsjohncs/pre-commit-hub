@@ -1,9 +1,8 @@
 import yaml
 from pathlib import Path
-from typing import Union
+from typing import Union, Optional, List, Tuple
 from ..models import SearchIndex, Hook, Repository
 from .search import load_cache
-from typing import Optional, List, Tuple
 
 
 def find_hooks(search_index: SearchIndex, query: str) -> List[Tuple[Hook, Repository]]:
@@ -54,11 +53,26 @@ def add_hook_to_config(
             print("Aborting.")
             return
 
-    config = (
-        yaml.safe_load(config_path.read_text())
-        if config_path.exists()
-        else {"repos": []}
-    )
+    yaml_content = config_path.read_text() if config_path.exists() else ""
+    modified_yaml = modify_yaml_config(yaml_content, hook, repository)
+
+    if modified_yaml != yaml_content:
+        config_path.write_text(modified_yaml)
+        print(f"Added hook '{hook.id}' from '{repository.repository}' to config")
+    else:
+        print(f"Hook '{hook.id}' from '{repository.repository}' is already in config")
+
+
+def add_hook(query: str, config_file: Union[str, Path]):
+    search_index = load_cache()
+    result = find_hook(query, search_index)
+    if result:
+        hook, repository = result
+        add_hook_to_config(hook, repository, config_file)
+
+
+def modify_yaml_config(yaml_content: str, hook: Hook, repository: Repository) -> str:
+    config = yaml.safe_load(yaml_content) if yaml_content else {"repos": []}
 
     # Check if the repository is already in the config
     repo_url = f"https://github.com/{repository.repository}"
@@ -73,19 +87,6 @@ def add_hook_to_config(
     # Check if the hook is already in the repository entry
     if not any(h["id"] == hook.id for h in repo_entry["hooks"]):
         repo_entry["hooks"].append({"id": hook.id})
-        config_path.write_text(yaml.dump(config, default_flow_style=False))
-        print(
-            f"Added hook '{hook.id}' from '{repository.repository}' to .pre-commit-config.yaml"
-        )
-    else:
-        print(
-            f"Hook '{hook.id}' from '{repository.repository}' is already in .pre-commit-config.yaml"
-        )
+        return yaml.dump(config, default_flow_style=False)
 
-
-def add_hook(query: str, config_file: Union[str, Path]):
-    search_index = load_cache()
-    result = find_hook(query, search_index)
-    if result:
-        hook, repository = result
-        add_hook_to_config(hook, repository, config_file)
+    return yaml_content

@@ -1,5 +1,6 @@
 import pytest
-from pre_commit_hook_index.commands.add import find_hooks
+import yaml
+from pre_commit_hook_index.commands.add import find_hooks, modify_yaml_config
 from pre_commit_hook_index.models import SearchIndex, Repository, Hook
 
 
@@ -58,3 +59,92 @@ def test_find_hooks_no_match(sample_search_index):
 def test_find_hooks_invalid_query(sample_search_index):
     results = find_hooks(sample_search_index, "invalid:query:format")
     assert len(results) == 0
+
+
+def test_modify_yaml_config_empty():
+    yaml_content = ""
+    hook = Hook(id="test-hook", name="Test Hook", description="A test hook")
+    repository = Repository(repository="user/repo", stars=100, hooks=[hook])
+
+    result = modify_yaml_config(yaml_content, hook, repository)
+    expected = {
+        "repos": [
+            {"repo": "https://github.com/user/repo", "hooks": [{"id": "test-hook"}]}
+        ]
+    }
+
+    assert yaml.safe_load(result) == expected
+
+
+def test_modify_yaml_config_existing_repo():
+    yaml_content = yaml.dump(
+        {
+            "repos": [
+                {
+                    "repo": "https://github.com/user/repo",
+                    "hooks": [{"id": "existing-hook"}],
+                }
+            ]
+        }
+    )
+    hook = Hook(id="test-hook", name="Test Hook", description="A test hook")
+    repository = Repository(repository="user/repo", stars=100, hooks=[hook])
+
+    result = modify_yaml_config(yaml_content, hook, repository)
+    expected = {
+        "repos": [
+            {
+                "repo": "https://github.com/user/repo",
+                "hooks": [{"id": "existing-hook"}, {"id": "test-hook"}],
+            }
+        ]
+    }
+
+    assert yaml.safe_load(result) == expected
+
+
+def test_modify_yaml_config_existing_hook():
+    yaml_content = yaml.dump(
+        {
+            "repos": [
+                {"repo": "https://github.com/user/repo", "hooks": [{"id": "test-hook"}]}
+            ]
+        }
+    )
+    hook = Hook(id="test-hook", name="Test Hook", description="A test hook")
+    repository = Repository(repository="user/repo", stars=100, hooks=[hook])
+
+    result = modify_yaml_config(yaml_content, hook, repository)
+
+    assert result == yaml_content
+
+
+def test_modify_yaml_config_new_repo():
+    yaml_content = yaml.dump(
+        {
+            "repos": [
+                {
+                    "repo": "https://github.com/other/repo",
+                    "hooks": [{"id": "other-hook"}],
+                }
+            ]
+        }
+    )
+    hook = Hook(id="test-hook", name="Test Hook", description="A test hook")
+    repository = Repository(repository="user/repo", stars=100, hooks=[hook])
+
+    result = modify_yaml_config(yaml_content, hook, repository)
+    expected = {
+        "repos": [
+            {
+                "repo": "https://github.com/other/repo",
+                "hooks": [{"id": "other-hook"}],
+            },
+            {
+                "repo": "https://github.com/user/repo",
+                "hooks": [{"id": "test-hook"}],
+            },
+        ]
+    }
+
+    assert yaml.safe_load(result) == expected
