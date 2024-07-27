@@ -25,3 +25,7 @@ allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/pre_commit_hook_index"]
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
