@@ -9,3 +9,7 @@ repos:
   rev: v1.1.373
   hooks:
   - id: pyright
+- repo: https://github.com/itsjohncs/rye-pre-commit
+  rev: v0.2.0
+  hooks:
+  - id: rye-test
