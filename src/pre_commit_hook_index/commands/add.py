@@ -45,13 +45,13 @@ def find_hook(
 
 def add_hook_to_config(
     hook: Hook, repository: Repository, config_file: Union[str, Path]
-):
+) -> bool:
     config_path = Path(config_file)
     if not config_path.exists():
         create = input(f"No {config_path} file found. Create one? (y/n): ")
         if create.lower() != "y":
             print("Aborting.")
-            return
+            return False
 
     yaml_content = config_path.read_text() if config_path.exists() else ""
     modified_yaml = modify_yaml_config(yaml_content, hook, repository)
@@ -59,16 +59,20 @@ def add_hook_to_config(
     if modified_yaml != yaml_content:
         config_path.write_text(modified_yaml)
         print(f"Added hook '{hook.id}' from '{repository.repository}' to config")
+        return True
     else:
         print(f"Hook '{hook.id}' from '{repository.repository}' is already in config")
+        return False
 
 
-def add_hook(query: str, config_file: str):
+def add_hook(query: str, config_file: str) -> int:
     search_index = load_cache()
     result = find_hook(query, search_index)
     if result:
         hook, repository = result
-        add_hook_to_config(hook, repository, config_file)
+        return 0 if add_hook_to_config(hook, repository, config_file) else 1
+    else:
+        return 1
 
 
 def modify_yaml_config(yaml_content: str, hook: Hook, repository: Repository) -> str:

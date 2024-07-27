@@ -46,18 +46,16 @@ def main() -> int:
     args = parser.parse_args()
 
     if args.command == "build-index":
-        build_cache()
+        return build_cache()
     elif args.command == "search":
-        search_hooks(args.query)
+        return search_hooks(args.query)
     elif args.command == "add":
-        add_hook(args.hook_name, args.config_file)
+        return add_hook(args.hook_name, args.config_file)
     elif args.command == "remove":
-        remove_hook(args.hook_id, args.config_file)
+        return remove_hook(args.hook_id, args.config_file)
     elif args.command is None:
         parser.print_help()
         return 1
     else:
         print(f"Unknown command: {args.command}")
         return 1
-
-    return 0

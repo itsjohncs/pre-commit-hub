@@ -50,7 +50,7 @@ def fetch_hooks(repo):
         raise RuntimeError(f"Got error fetching hooks in repo {repo}") from e
 
 
-def build_cache():
+def build_cache() -> int:
     repos = load_repositories()
     cache_data = []
     for repo in repos:
@@ -70,3 +70,4 @@ def build_cache():
     search_index = SearchIndex(repositories=cache_data)
     save_to_cache(search_index)
     print("Data saved to ~/.pre-commit-hook-index/index.yaml")
+    return 0

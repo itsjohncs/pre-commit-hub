@@ -18,7 +18,7 @@ def load_cache() -> SearchIndex:
         return SearchIndex.model_validate(data)
 
 
-def search_hooks(query: str):
+def search_hooks(query: str) -> int:
     search_index = load_cache()
 
     documents = [
@@ -31,6 +31,7 @@ def search_hooks(query: str):
 
     if not results:
         print(f"No results found for query: {query}")
+        return 1
     else:
         for hook, score in cast(list[Tuple[dict, int]], results):
             print(f"Match score: {score}")
@@ -40,3 +41,4 @@ def search_hooks(query: str):
             print(f"Hook Name: {hook['name']}")
             print(f"Description: {hook['description']}")
             print("---")
+        return 0

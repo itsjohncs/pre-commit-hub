@@ -38,5 +38,5 @@ def remove_hook_from_config(hook_id: str, config_file: Union[str, Path]) -> bool
         return False
 
 
-def remove_hook(hook_id: str, config_file: str):
-    remove_hook_from_config(hook_id, config_file)
+def remove_hook(hook_id: str, config_file: str) -> int:
+    return 0 if remove_hook_from_config(hook_id, config_file) else 1
