@@ -73,7 +73,8 @@ def test_modify_yaml_config_empty():
         "repos": [
             {
                 "repo": "https://github.com/user/repo",
-                "hooks": [{"id": "test-hook", "rev": "abcdef1234567890"}],
+                "rev": "abcdef1234567890",
+                "hooks": [{"id": "test-hook"}],
             }
         ]
     }
@@ -87,6 +88,7 @@ def test_modify_yaml_config_existing_repo():
             "repos": [
                 {
                     "repo": "https://github.com/user/repo",
+                    "rev": "oldrev",
                     "hooks": [{"id": "existing-hook"}],
                 }
             ]
@@ -100,9 +102,10 @@ def test_modify_yaml_config_existing_repo():
         "repos": [
             {
                 "repo": "https://github.com/user/repo",
+                "rev": "oldrev",
                 "hooks": [
                     {"id": "existing-hook"},
-                    {"id": "test-hook", "rev": "v1.0.0"},
+                    {"id": "test-hook"},
                 ],
             }
         ]
@@ -114,14 +117,18 @@ def test_modify_yaml_config_existing_hook():
     yaml_content = yaml.dump(
         {
             "repos": [
-                {"repo": "https://github.com/user/repo", "hooks": [{"id": "test-hook"}]}
+                {
+                    "repo": "https://github.com/user/repo",
+                    "rev": "v1.0.0",
+                    "hooks": [{"id": "test-hook"}],
+                }
             ]
         }
     )
     hook = Hook(id="test-hook", name="Test Hook", description="A test hook")
     repository = Repository(repository="user/repo", stars=100, hooks=[hook])
 
-    result = modify_yaml_config(yaml_content, hook, repository.repository, "v1.0.0")
+    result = modify_yaml_config(yaml_content, hook, repository.repository, "v2.0.0")
 
     assert yaml.safe_load(result) == yaml.safe_load(yaml_content)
 
@@ -132,6 +139,7 @@ def test_modify_yaml_config_new_repo():
             "repos": [
                 {
                     "repo": "https://github.com/other/repo",
+                    "rev": "v1.0.0",
                     "hooks": [{"id": "other-hook"}],
                 }
             ]
@@ -147,11 +155,13 @@ def test_modify_yaml_config_new_repo():
         "repos": [
             {
                 "repo": "https://github.com/other/repo",
+                "rev": "v1.0.0",
                 "hooks": [{"id": "other-hook"}],
             },
             {
                 "repo": "https://github.com/user/repo",
-                "hooks": [{"id": "test-hook", "rev": "abcdef1234567890"}],
+                "rev": "abcdef1234567890",
+                "hooks": [{"id": "test-hook"}],
             },
         ]
     }

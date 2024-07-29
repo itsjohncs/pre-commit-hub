@@ -103,15 +103,15 @@ def modify_yaml_config(
     )
 
     if repo_entry is None:
-        repo_entry = {"repo": repo_url, "hooks": []}
+        repo_entry = {"repo": repo_url, "rev": latest_rev, "hooks": []}
         config["repos"].append(repo_entry)
+    elif "rev" not in repo_entry:
+        repo_entry["rev"] = latest_rev
 
     # Check if the hook already exists
     existing_hook = next((h for h in repo_entry["hooks"] if h["id"] == hook.id), None)
     if existing_hook is None:
         new_hook = {"id": hook.id}
-        if latest_rev:
-            new_hook["rev"] = latest_rev
         repo_entry["hooks"].append(new_hook)
 
     return yaml.dump(config, default_flow_style=False, sort_keys=False)
