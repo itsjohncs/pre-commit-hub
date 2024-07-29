@@ -27,7 +27,7 @@ def setup_parser():
     search_parser.add_argument("query", help="Search query")
 
     add_parser = subparsers.add_parser("add", help="Add pre-commit hooks to the config")
-    add_parser.add_argument("hook_names", nargs="+", help="Hook names to add")
+    add_parser.add_argument("hook_ids", nargs="+", help="Hook IDs to add")
     add_parser.add_argument(
         "-f",
         "--config-file",
@@ -64,9 +64,7 @@ def main() -> int:
     if args.command == "search":
         return search_hooks(args.query)
     elif args.command == "add":
-        return max(
-            add_hook(hook_name, args.config_file) for hook_name in args.hook_names
-        )
+        return max(add_hook(hook_id, args.config_file) for hook_id in args.hook_ids)
     elif args.command == "remove":
         return max(remove_hook(hook_id, args.config_file) for hook_id in args.hook_ids)
     elif args.command is None:
