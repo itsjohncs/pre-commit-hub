@@ -66,10 +66,15 @@ def test_modify_yaml_config_empty():
     hook = Hook(id="test-hook", name="Test Hook", description="A test hook")
     repository = Repository(repository="user/repo", stars=100, hooks=[hook])
 
-    result = modify_yaml_config(yaml_content, hook, repository)
+    result = modify_yaml_config(
+        yaml_content, hook, repository.repository, "abcdef1234567890"
+    )
     expected = {
         "repos": [
-            {"repo": "https://github.com/user/repo", "hooks": [{"id": "test-hook"}]}
+            {
+                "repo": "https://github.com/user/repo",
+                "hooks": [{"id": "test-hook", "rev": "abcdef1234567890"}],
+            }
         ]
     }
 
@@ -90,16 +95,18 @@ def test_modify_yaml_config_existing_repo():
     hook = Hook(id="test-hook", name="Test Hook", description="A test hook")
     repository = Repository(repository="user/repo", stars=100, hooks=[hook])
 
-    result = modify_yaml_config(yaml_content, hook, repository)
+    result = modify_yaml_config(yaml_content, hook, repository.repository, "v1.0.0")
     expected = {
         "repos": [
             {
                 "repo": "https://github.com/user/repo",
-                "hooks": [{"id": "existing-hook"}, {"id": "test-hook"}],
+                "hooks": [
+                    {"id": "existing-hook"},
+                    {"id": "test-hook", "rev": "v1.0.0"},
+                ],
             }
         ]
     }
-
     assert yaml.safe_load(result) == expected
 
 
@@ -114,9 +121,9 @@ def test_modify_yaml_config_existing_hook():
     hook = Hook(id="test-hook", name="Test Hook", description="A test hook")
     repository = Repository(repository="user/repo", stars=100, hooks=[hook])
 
-    result = modify_yaml_config(yaml_content, hook, repository)
+    result = modify_yaml_config(yaml_content, hook, repository.repository, "v1.0.0")
 
-    assert result == yaml_content
+    assert yaml.safe_load(result) == yaml.safe_load(yaml_content)
 
 
 def test_modify_yaml_config_new_repo():
@@ -133,7 +140,9 @@ def test_modify_yaml_config_new_repo():
     hook = Hook(id="test-hook", name="Test Hook", description="A test hook")
     repository = Repository(repository="user/repo", stars=100, hooks=[hook])
 
-    result = modify_yaml_config(yaml_content, hook, repository)
+    result = modify_yaml_config(
+        yaml_content, hook, repository.repository, "abcdef1234567890"
+    )
     expected = {
         "repos": [
             {
@@ -142,7 +151,7 @@ def test_modify_yaml_config_new_repo():
             },
             {
                 "repo": "https://github.com/user/repo",
-                "hooks": [{"id": "test-hook"}],
+                "hooks": [{"id": "test-hook", "rev": "abcdef1234567890"}],
             },
         ]
     }
