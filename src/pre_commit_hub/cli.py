@@ -1,10 +1,11 @@
 import argparse
+import os
 from pathlib import Path
 from .commands.build_index import build_cache
 from .commands.search import search_hooks
 from .commands.add import add_hook
 from .commands.remove import remove_hook
-from .console import error
+from .console import error, warning
 
 
 def check_cache_exists():
@@ -53,6 +54,9 @@ def setup_parser():
 def main() -> int:
     parser = setup_parser()
     args = parser.parse_args()
+
+    if not os.environ.get("GITHUB_TOKEN"):
+        warning("No `GITHUB_TOKEN` in env. GitHub API rate limits may be very low.")
 
     if args.command == "build-index":
         return build_cache()
