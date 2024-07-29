@@ -2,12 +2,7 @@ import yaml
 from importlib import resources
 from pathlib import Path
 from ..models import Hook, Repository, SearchIndex
-from github import Github
-import os
-
-# Initialize Github client
-github_token = os.environ.get("GITHUB_TOKEN")
-g = Github(github_token)
+from ._github import g
 
 
 def load_repositories():
