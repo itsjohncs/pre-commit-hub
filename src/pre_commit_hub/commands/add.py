@@ -1,4 +1,5 @@
 import yaml
+from rich.prompt import Confirm
 from pathlib import Path
 from typing import Union, Optional, List, Tuple
 from ..models import SearchIndex, Hook, Repository
@@ -50,8 +51,7 @@ def add_hook_to_config(
 ) -> bool:
     config_path = Path(config_file)
     if not config_path.exists():
-        create = input(f"No {config_path} file found. Create one? (y/n): ")
-        if create.lower() != "y":
+        if not Confirm.ask(f"No {config_path} file found. Create one?"):
             print("Aborting.")
             return False
 
