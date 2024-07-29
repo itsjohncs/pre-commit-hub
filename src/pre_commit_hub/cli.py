@@ -1,8 +1,14 @@
 import argparse
+from pathlib import Path
 from .commands.build_index import build_cache
 from .commands.search import search_hooks
 from .commands.add import add_hook
 from .commands.remove import remove_hook
+
+
+def check_cache_exists():
+    cache_file = Path.home() / ".pre-commit-hub" / "index.yaml"
+    return cache_file.exists()
 
 
 def setup_parser():
@@ -49,7 +55,12 @@ def main() -> int:
 
     if args.command == "build-index":
         return build_cache()
-    elif args.command == "search":
+
+    if not check_cache_exists():
+        print("Error: Cache does not exist. Please run 'build-index' first.")
+        return 1
+
+    if args.command == "search":
         return search_hooks(args.query)
     elif args.command == "add":
         return add_hook(args.hook_name, args.config_file)

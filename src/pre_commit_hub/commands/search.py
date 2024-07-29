@@ -2,16 +2,11 @@ from typing import Tuple, cast
 import yaml
 from pathlib import Path
 from thefuzz import fuzz, process
-from .build_index import build_cache
 from ..models import SearchIndex
 
 
 def load_cache() -> SearchIndex:
     cache_file = Path.home() / ".pre-commit-hub" / "index.yaml"
-    if not cache_file.exists():
-        print("Cache file does not exist. Building cache...")
-        build_cache()
-
     with open(cache_file, "r") as f:
         data = yaml.safe_load(f)
         return SearchIndex.model_validate(data)
