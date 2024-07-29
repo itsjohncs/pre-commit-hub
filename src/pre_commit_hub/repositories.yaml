@@ -26,6 +26,7 @@
 - mrtazz/checkmake
 - nicklockwood/SwiftFormat
 - openstack/bashate
+- pecigonzalo/pre-commit-shfmt
 - pre-commit/pre-commit-hooks
 - pre-commit/pygrep-hooks
 - pre-commit/sync-pre-commit-deps
