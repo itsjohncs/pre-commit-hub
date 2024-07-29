@@ -1,6 +1,7 @@
 import yaml
 from pathlib import Path
 from typing import Union
+from ..console import error
 
 
 def transform_yaml_remove_hook(yaml_content: str, hook_id: str) -> str:
@@ -23,7 +24,7 @@ def transform_yaml_remove_hook(yaml_content: str, hook_id: str) -> str:
 def remove_hook_from_config(hook_id: str, config_file: Union[str, Path]) -> bool:
     config_path = Path(config_file)
     if not config_path.exists():
-        print(f"Config file {config_path} not found.")
+        error(f"Config file {config_path} not found.")
         return False
 
     yaml_content = config_path.read_text()

@@ -4,6 +4,7 @@ from typing import Union, Optional, List, Tuple
 from ..models import SearchIndex, Hook, Repository
 from .search import load_cache
 from ._github import g
+from ..console import error
 
 
 def find_hooks(search_index: SearchIndex, query: str) -> List[Tuple[Hook, Repository]]:
@@ -34,10 +35,10 @@ def find_hook(
 ) -> Optional[Tuple[Hook, Repository]]:
     matches = find_hooks(search_index, query)
     if len(matches) == 0:
-        print(f"No hooks found matching '{query}'")
+        error(f"No hooks found matching '{query}'")
         return None
     elif len(matches) > 1:
-        print(f"Multiple hooks found matching '{query}':")
+        error(f"Multiple hooks found matching '{query}':")
         for hook, repo in matches:
             print(f"  {repo.repository}:{hook.id}")
         return None

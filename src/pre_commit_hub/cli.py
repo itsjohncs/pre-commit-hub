@@ -4,6 +4,7 @@ from .commands.build_index import build_cache
 from .commands.search import search_hooks
 from .commands.add import add_hook
 from .commands.remove import remove_hook
+from .console import error
 
 
 def check_cache_exists():
@@ -57,7 +58,7 @@ def main() -> int:
         return build_cache()
 
     if not check_cache_exists():
-        print("Error: Cache does not exist. Please run 'build-index' first.")
+        error("Cache does not exist. Please run 'build-index' first.")
         return 1
 
     if args.command == "search":
@@ -70,5 +71,5 @@ def main() -> int:
         parser.print_help()
         return 1
     else:
-        print(f"Unknown command: {args.command}")
+        error(f"Unknown command: {args.command}")
         return 1

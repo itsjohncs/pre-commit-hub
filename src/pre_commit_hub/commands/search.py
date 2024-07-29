@@ -3,6 +3,7 @@ import yaml
 from pathlib import Path
 from thefuzz import fuzz, process
 from ..models import SearchIndex
+from ..console import error
 
 
 def load_cache() -> SearchIndex:
@@ -24,7 +25,7 @@ def search_hooks(query: str) -> int:
     results = process.extract(query, documents, scorer=fuzz.partial_token_sort_ratio)
 
     if not results:
-        print(f"No results found for query: {query}")
+        error(f"No results found for query: {query}")
         return 1
     else:
         for hook, score in cast(list[Tuple[dict, int]], results):
