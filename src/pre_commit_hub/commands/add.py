@@ -73,8 +73,10 @@ def add_hook_to_config(
 
 def hook_exists_in_config(yaml_content: str, hook: Hook, repository: str) -> bool:
     config = yaml.safe_load(yaml_content)
-    repo_url = f"https://github.com/{repository}"
+    if config is None:
+        return False
 
+    repo_url = f"https://github.com/{repository}"
     for repo in config.get("repos", []):
         if repo["repo"] == repo_url:
             if any(h["id"] == hook.id for h in repo.get("hooks", [])):
