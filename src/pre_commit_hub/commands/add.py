@@ -1,11 +1,11 @@
 import yaml
 from rich.prompt import Confirm
-from pathlib import Path
-from typing import Union, Optional, List, Tuple
+from typing import Optional, List, Tuple
 from ..models import SearchIndex, Hook, Repository
 from .search import load_cache
 from ._github import g
 from ..console import error
+from ._git import find_config_file
 
 
 def find_hooks(search_index: SearchIndex, query: str) -> List[Tuple[Hook, Repository]]:
@@ -47,9 +47,9 @@ def find_hook(
 
 
 def add_hook_to_config(
-    hook: Hook, repository: Repository, config_file: Union[str, Path]
+    hook: Hook, repository: Repository, config_file: Optional[str] = None
 ) -> bool:
-    config_path = Path(config_file)
+    config_path = find_config_file(config_file)
     if not config_path.exists():
         if not Confirm.ask(f"No {config_path} file found. Create one?"):
             print("Aborting.")
@@ -82,7 +82,7 @@ def hook_exists_in_config(yaml_content: str, hook: Hook, repository: str) -> boo
     return False
 
 
-def add_hook(query: str, config_file: str) -> int:
+def add_hook(query: str, config_file: Optional[str] = None) -> int:
     search_index = load_cache()
     result = find_hook(query, search_index)
     if result:

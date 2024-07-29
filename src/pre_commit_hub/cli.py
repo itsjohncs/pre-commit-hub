@@ -33,7 +33,6 @@ def setup_parser():
     add_parser.add_argument(
         "-f",
         "--config-file",
-        default=".pre-commit-config.yaml",
         help="Path to the config file (default: .pre-commit-config.yaml)",
     )
 
@@ -44,7 +43,6 @@ def setup_parser():
     remove_parser.add_argument(
         "-f",
         "--config-file",
-        default=".pre-commit-config.yaml",
         help="Path to the config file (default: .pre-commit-config.yaml)",
     )
 

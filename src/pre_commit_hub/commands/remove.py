@@ -1,7 +1,7 @@
 import yaml
-from pathlib import Path
-from typing import Union
+from typing import Optional
 from ..console import error
+from ._git import find_config_file
 
 
 def transform_yaml_remove_hook(yaml_content: str, hook_id: str) -> str:
@@ -21,8 +21,8 @@ def transform_yaml_remove_hook(yaml_content: str, hook_id: str) -> str:
     return yaml.dump(config, default_flow_style=False, sort_keys=False)
 
 
-def remove_hook_from_config(hook_id: str, config_file: Union[str, Path]) -> bool:
-    config_path = Path(config_file)
+def remove_hook_from_config(hook_id: str, config_file: Optional[str] = None) -> bool:
+    config_path = find_config_file(config_file)
     if not config_path.exists():
         error(f"Config file {config_path} not found.")
         return False
@@ -39,5 +39,5 @@ def remove_hook_from_config(hook_id: str, config_file: Union[str, Path]) -> bool
         return False
 
 
-def remove_hook(hook_id: str, config_file: str) -> int:
+def remove_hook(hook_id: str, config_file: Optional[str] = None) -> int:
     return 0 if remove_hook_from_config(hook_id, config_file) else 1
