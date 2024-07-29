@@ -17,7 +17,7 @@ def transform_yaml_remove_hook(yaml_content: str, hook_id: str) -> str:
 
     config["repos"] = new_repos
 
-    return yaml.dump(config, default_flow_style=False)
+    return yaml.dump(config, default_flow_style=False, sort_keys=False)
 
 
 def remove_hook_from_config(hook_id: str, config_file: Union[str, Path]) -> bool:

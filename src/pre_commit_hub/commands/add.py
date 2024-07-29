@@ -113,7 +113,7 @@ def modify_yaml_config(
             new_hook["rev"] = latest_rev
         repo_entry["hooks"].append(new_hook)
 
-    return yaml.dump(config, default_flow_style=False)
+    return yaml.dump(config, default_flow_style=False, sort_keys=False)
 
 
 def get_latest_revision(repository: str) -> str:
