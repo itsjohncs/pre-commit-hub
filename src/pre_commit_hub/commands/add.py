@@ -120,6 +120,19 @@ def get_latest_revision(repository: str) -> str:
     repo = g.get_repo(repository)
     tags = list(repo.get_tags())
     if tags:
-        return tags[0] if isinstance(tags[0], str) else tags[0].name
+        first_tag = tags[0]
+
+        same_commit_tags = [
+            tag for tag in tags if tag.commit.sha == first_tag.commit.sha
+        ]
+
+        # Try to find a tag with a period in its name. This is the same criteria
+        # pre-commit uses [^1].
+        # [^1]: https://github.com/pre-commit/pre-commit/blob/d46423ffe14a37a06a0bcb6fe1b8294a27b6c289/pre_commit/git.py#L233
+        for tag in same_commit_tags:
+            if "." in tag.name:
+                return tag.name
+
+        return first_tag.name
     else:
         return repo.get_commits()[0].sha
