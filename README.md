@@ -37,9 +37,6 @@ $ pre-commit-hub add black
 Added hook 'black' from 'psf/black' to config
 ```
 
-> [!WARNING]
-> TODO: This doesn't set the `rev` property correctly yet.
-
 ## Remove
 
 Remove hooks from your repo.
