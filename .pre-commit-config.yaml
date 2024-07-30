@@ -24,10 +24,15 @@ repos:
   - id: prettify-nextjs
     name: prettify-nextjs
     language: system
-    entry: cd ./website && npm run prettify --
+    entry: npm --prefix ./website run prettify --
     files: "^website/.*$"
+    # Prettify can't handle filenames that aren't relative to the root of the
+    # `package.json` file. I could script a solution, but since it's so fast
+    # to prettify all the files every time for such a small project, I'll just
+    # do that.
+    pass_filenames: false
   - id: lint-nextjs
     name: lint-nextjs
     language: system
-    entry: cd ./website && npm run lint -- --file
+    entry: npm --prefix ./website run lint -- --file
     types_or: [ ts, tsx ]
