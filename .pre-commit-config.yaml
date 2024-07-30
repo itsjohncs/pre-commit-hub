@@ -21,6 +21,11 @@ repos:
     files: 'repositories.yaml$'
 - repo: local
   hooks:
+  - id: prettify-nextjs
+    name: prettify-nextjs
+    language: system
+    entry: cd ./website && npm run prettify --
+    files: "^website/.*$"
   - id: lint-nextjs
     name: lint-nextjs
     language: system
