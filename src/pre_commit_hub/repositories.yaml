@@ -27,11 +27,13 @@
 - nicklockwood/SwiftFormat
 - openstack/bashate
 - pecigonzalo/pre-commit-shfmt
+- pre-commit/mirrors-eslint
 - pre-commit/pre-commit-hooks
 - pre-commit/pygrep-hooks
 - pre-commit/sync-pre-commit-deps
 - psf/black
 - python-jsonschema/check-jsonschema
+- rbubley/mirrors-prettier
 - realm/SwiftLint
 - rhysd/actionlint
 - rubocop/rubocop
