@@ -11,3 +11,4 @@ wheels/
 .aider*
 
 *.code-workspace
+.vercel
