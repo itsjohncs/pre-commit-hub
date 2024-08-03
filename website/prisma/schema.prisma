@@ -9,5 +9,5 @@ datasource db {
 }
 
 model Repo {
-    id String @id
+    id        String @id
 }
