@@ -3,6 +3,7 @@ import {Octokit} from "@octokit/core";
 import {z} from "zod";
 
 import prisma from "#root/prisma";
+import {Prisma} from "@prisma/client";
 
 const octokit = new Octokit({auth: process.env.GITHUB_TOKEN});
 
@@ -35,9 +36,21 @@ export async function POST(request: Request) {
         );
         const id = (response as any).repository.id;
 
-        const repo = await prisma.repo.create({data: {id}});
-
-        return NextResponse.json(repo);
+        try {
+            const repo = await prisma.repo.create({data: {id}});
+            return NextResponse.json(repo);
+        } catch (error) {
+            if (
+                error instanceof Prisma.PrismaClientKnownRequestError &&
+                error.code === "P2002"
+            ) {
+                return NextResponse.json(
+                    {error: "Repository already exists in the database"},
+                    {status: 409},
+                );
+            }
+            throw error;
+        }
     } catch (error) {
         console.error("Error processing request:", error);
         return NextResponse.json(
